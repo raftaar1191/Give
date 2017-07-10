@@ -39,6 +39,9 @@
  * - The WordImpress Team
  */
 
+
+// Test commit that it's working or not.
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
