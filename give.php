@@ -42,6 +42,8 @@
 
 // Test commit that it's working or not.
 
+// Second commit on the same branch.
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
