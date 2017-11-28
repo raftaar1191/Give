@@ -577,11 +577,12 @@ function give_donation_import_callback() {
 		);
 	}
 
-	$url              = give_import_page_url( array(
+	$url = give_import_page_url( array(
 		'step'          => '4',
 		'importer-type' => 'import_donations',
 		'csv'           => $import_setting['csv'],
 		'total'         => $total,
+		'importer_id'   => $import_setting['importer_id'],
 		'delete_csv'    => $import_setting['delete_csv'],
 		'success'       => ( isset( $json_data['success'] ) ? $json_data['success'] : '' ),
 	) );
