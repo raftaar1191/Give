@@ -86,6 +86,12 @@ function give_import_get_form_data_from_csv( $data, $import_setting = array() ) 
 				'post_status' => 'publish',
 			);
 			$form                  = $form->create( $args );
+			$form_id                  = $form->get_ID();
+
+			update_user_meta( $form_id, '_give_payment_import', true );
+			update_post_meta( $form_id, 'give_csv_id', $import_setting['csv'] );
+			update_post_meta( $form_id, 'give_importer_id', $import_setting['importer_id'] );
+
 			$report['create_form'] = ( ! empty( $report['create_form'] ) ? ( absint( $report['create_form'] ) + 1 ) : 1 );
 			$new_form              = true;
 
@@ -241,7 +247,8 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 				$donor_data = new Give_Donor();
 				$donor_data->create( $donor_args );
 
-				$donor_data->update_meta( 'importer_id', $import_setting['importer_id'] );
+				$donor_data->update_meta( 'give_csv_id', $import_setting['csv'] );
+				$donor_data->update_meta( 'give_importer_id', $import_setting['importer_id'] );
 
 				// Adding notes that donor is being imported from CSV.
 				$current_user = wp_get_current_user();
@@ -296,10 +303,12 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 				remove_filter( 'give_log_user_in_on_register', 'give_log_user_in_on_register_callback', 11 );
 
 				update_user_meta( $customer_id, '_give_payment_import', true );
-				update_user_meta( $customer_id, 'importer_id', $import_setting['importer_id'] );
+				update_user_meta( $customer_id, 'give_csv_id', $import_setting['csv'] );
+				update_user_meta( $customer_id, 'give_importer_id', $import_setting['importer_id'] );
 
 				$donor_data = new Give_Donor( $customer_id, true );
-				$donor_data->update_meta( 'importer_id', $import_setting['importer_id'] );
+				$donor_data->update_meta( 'give_csv_id', $import_setting['csv'] );
+				$donor_data->update_meta( 'give_importer_id', $import_setting['importer_id'] );
 
 			} else {
 				$customer_id = ( ! empty( $donor_data->ID ) ? $donor_data->ID : false );
@@ -326,7 +335,8 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 
 					$donor_data->create( $donor_args );
 
-					$donor_data->update_meta( 'importer_id', $import_setting['importer_id'] );
+					$donor_data->update_meta( 'give_csv_id', $import_setting['csv'] );
+					$donor_data->update_meta( 'give_importer_id', $import_setting['importer_id'] );
 
 					// Adding notes that donor is being imported from CSV.
 					$current_user = wp_get_current_user();
@@ -519,6 +529,7 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 	$price_id                      = false;
 	$customer_id                   = 0;
 	$import_setting['create_user'] = ( isset( $import_setting['create_user'] ) ? $import_setting['create_user'] : 1 );
+	$import_setting['importer_id'] = ( isset( $import_setting['importer_id'] ) ? $import_setting['importer_id'] : $import_setting['csv'] );
 
 	$data = (array) apply_filters( 'give_save_import_donation_to_db', $data );
 
@@ -601,9 +612,10 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 			$report['create_donation'] = ( ! empty( $report['create_donation'] ) ? ( absint( $report['create_donation'] ) + 1 ) : 1 );
 
 			update_post_meta( $payment, '_give_payment_import', true );
+			update_post_meta( $payment, 'give_importer_id', $import_setting['importer_id'] );
 
 			if ( ! empty( $import_setting['csv'] ) ) {
-				update_post_meta( $payment, '_give_payment_import_id', $import_setting['csv'] );
+				update_post_meta( $payment, 'give_csv_id', $import_setting['csv'] );
 			}
 
 			// Insert Notes.
