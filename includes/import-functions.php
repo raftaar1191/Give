@@ -801,7 +801,8 @@ function give_delete_importer_data( $importer_id = false ) {
 		// delete all the donation
 		give_delete_importer_donation( $importer_id );
 
-
+		// delete importer donor.
+		give_delete_importer_donor( $importer_id );
 	}
 }
 
@@ -837,9 +838,6 @@ function give_delete_importer_donation( $importer_id ) {
 		foreach ( $payments as $payment ) {
 			// delete importer donation.
 			give_delete_donation( $payment->ID );
-
-			// delete importer donor.
-			give_delete_importer_donor( $importer_id );
 		}
 	}
 }
