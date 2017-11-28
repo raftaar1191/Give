@@ -798,30 +798,86 @@ function give_import_page_url( $parameter = array() ) {
  */
 function give_delete_importer_data( $importer_id = false ) {
 	if ( ! empty( $importer_id ) ) {
+		// delete all the donation
+		give_delete_importer_donation( $importer_id );
 
-		/**
-		 * Filter to modify donation query that are getting delete by passing importer id.
-		 *
-		 * @since 1.8.17
-		 */
-		$args = (array) apply_filters( 'give_delete_importer_data',
-			array(
-				'output'         => 'payments',
-				'post_status'    => 'any',
-				'number'         => - 1,
-				'meta_key'       => 'give_importer_id',
-				'meta_value_num' => absint( $importer_id ),
+
+	}
+}
+
+/**
+ * Give delete all the donation created during the CSV imported.
+ * Will delete all the data that is being created using that importer_id.
+ *
+ * @since 1.8.17
+ *
+ * @param bool $importer_id .
+ */
+function give_delete_importer_donation( $importer_id ) {
+	/**
+	 * Filter to modify donation query that are getting delete by passing importer id.
+	 *
+	 * @since 1.8.17
+	 */
+	$args = (array) apply_filters( 'give_delete_importer_data',
+		array(
+			'output'         => 'payments',
+			'post_status'    => 'any',
+			'number'         => - 1,
+			'meta_key'       => 'give_importer_id',
+			'meta_value_num' => absint( $importer_id ),
+		),
+		$importer_id
+	);
+
+	$posts    = new Give_Payments_Query( $args );
+	$payments = $posts->get_payments();
+
+	if ( $payments ) {
+		foreach ( $payments as $payment ) {
+			// delete importer donation.
+			give_delete_donation( $payment->ID );
+
+			// delete importer donor.
+			give_delete_importer_donor( $importer_id );
+		}
+	}
+}
+
+/**
+ * Give delete all the donation created during the CSV imported.
+ * Will delete all the data that is being created using that importer_id.
+ *
+ * @since 1.8.17
+ *
+ * @param bool $importer_id .
+ */
+function give_delete_importer_donor( $importer_id ) {
+	$importer_id = absint( $importer_id );
+	/**
+	 * Filter to modify donation query that are getting delete by passing importer id.
+	 *
+	 * @since 1.8.17
+	 */
+	$args = (array) apply_filters( 'give_delete_importer_data',
+		array(
+			'fields' => 'id',
+			'meta_query' => array(
+				array(
+					'key'   => 'give_importer_id',
+					'value' => $importer_id,
+				),
 			),
-			$importer_id
-		);
+		),
+		$importer_id
+	);
 
-		$posts    = new Give_Payments_Query( $args );
-		$payments = $posts->get_payments();
+	$donor = new Give_Donors_Query( $args );
+	$donors = $donor->get_donors();
 
-		if ( $payments ) {
-			foreach ( $payments as $payment ) {
-				give_delete_donation( $payment->ID );
-			}
+	if ( $donors ) {
+		foreach ( $donors as $donor ) {
+			Give()->donors->delete( $donor->id );
 		}
 	}
 }
