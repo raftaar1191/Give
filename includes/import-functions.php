@@ -80,17 +80,12 @@ function give_import_get_form_data_from_csv( $data, $import_setting = array() ) 
 
 			$form = new Give_Donate_Form( $form->ID );
 		} else {
-			$form                  = new Give_Donate_Form();
-			$args                  = array(
+			$form = new Give_Donate_Form();
+			$args = array(
 				'post_title'  => $data['form_title'],
 				'post_status' => 'publish',
 			);
-			$form                  = $form->create( $args );
-			$form_id                  = $form->get_ID();
-
-			update_user_meta( $form_id, '_give_payment_import', true );
-			update_post_meta( $form_id, 'give_csv_id', $import_setting['csv'] );
-			update_post_meta( $form_id, 'give_importer_id', $import_setting['importer_id'] );
+			$form = $form->create( $args );
 
 			$report['create_form'] = ( ! empty( $report['create_form'] ) ? ( absint( $report['create_form'] ) + 1 ) : 1 );
 			$new_form              = true;
@@ -99,6 +94,12 @@ function give_import_get_form_data_from_csv( $data, $import_setting = array() ) 
 
 		$form = get_page_by_title( $data['form_title'], OBJECT, 'give_forms' );
 		$form = new Give_Donate_Form( $form->ID );
+
+		if ( true === $new_form ) {
+			update_user_meta( $form->ID, '_give_payment_import', true );
+			update_post_meta( $form->ID, 'give_csv_id', $import_setting['csv'] );
+			update_post_meta( $form->ID, 'give_importer_id', $import_setting['importer_id'] );
+		}
 	}
 
 	if ( ! empty( $form ) && $form->get_ID() ) {
