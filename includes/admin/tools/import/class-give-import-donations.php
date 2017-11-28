@@ -355,6 +355,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 					<input type="hidden" value="<?php echo $_REQUEST['delete_csv']; ?>" name="delete_csv"
 						   class="delete_csv">
 					<input type="hidden" value="<?php echo $delimiter; ?>" name="delimiter">
+					<input type="hidden" value="<?php echo absint( $_REQUEST['importer_id'] ); ?>" name="importer_id">
 					<input type="hidden" value='<?php echo maybe_serialize( self::get_importer( $csv, 0, $delimiter ) ); ?>'
 						   name="main_key"
 						   class="main_key">

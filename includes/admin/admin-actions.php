@@ -513,16 +513,10 @@ function give_donation_import_callback() {
 	$import_setting = array();
 	$fields         = isset( $_POST['fields'] ) ? $_POST['fields'] : null;
 
-	parse_str( $fields );
-
-	$import_setting['create_user'] = $create_user;
-	$import_setting['mode']        = $mode;
-	$import_setting['delimiter']   = $delimiter;
-	$import_setting['csv']         = $csv;
-	$import_setting['delete_csv']  = $delete_csv;
+	wp_parse_str( $fields, $import_setting );
 
 	// Parent key id.
-	$main_key = maybe_unserialize( $main_key );
+	$main_key = maybe_unserialize( $import_setting['main_key'] );
 
 	$current    = absint( $_REQUEST['current'] );
 	$total_ajax = absint( $_REQUEST['total_ajax'] );
@@ -531,13 +525,13 @@ function give_donation_import_callback() {
 	$next       = absint( $_REQUEST['next'] );
 	$total      = absint( $_REQUEST['total'] );
 	$per_page   = absint( $_REQUEST['per_page'] );
-	if ( empty( $delimiter ) ) {
-		$delimiter = ',';
+	if ( empty( $import_setting['delimiter'] ) ) {
+		$import_setting['delimiter'] = ',';
 	}
 
 	// Processing done here.
-	$raw_data = give_get_donation_data_from_csv( $csv, $start, $end, $delimiter );
-	$raw_key  = maybe_unserialize( $mapto );
+	$raw_data = give_get_donation_data_from_csv( $import_setting['csv'], $start, $end, $import_setting['delimiter'] );
+	$raw_key  = maybe_unserialize( $import_setting['mapto'] );
 
 	// Prevent normal emails.
 	remove_action( 'give_complete_donation', 'give_trigger_donation_receipt', 999 );
@@ -586,7 +580,7 @@ function give_donation_import_callback() {
 	$url              = give_import_page_url( array(
 		'step'          => '4',
 		'importer-type' => 'import_donations',
-		'csv'           => $csv,
+		'csv'           => $import_setting['csv'],
 		'total'         => $total,
 		'delete_csv'    => $import_setting['delete_csv'],
 		'success'       => ( isset( $json_data['success'] ) ? $json_data['success'] : '' ),

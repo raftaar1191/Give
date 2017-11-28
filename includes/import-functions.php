@@ -240,6 +240,8 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 				$donor_data = new Give_Donor();
 				$donor_data->create( $donor_args );
 
+				$donor_data->update_meta( 'importer_id', $import_setting['importer_id'] );
+
 				// Adding notes that donor is being imported from CSV.
 				$current_user = wp_get_current_user();
 				$donor_data->add_note( esc_html( wp_sprintf( __( 'This donor was imported by %s', 'give' ), $current_user->user_email ) ) );
