@@ -784,6 +784,11 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 						'disabled' => __( 'Disabled', 'give' ),
 					),
 				),
+				array(
+					'id'    => 'importer_id',
+					'default' => rand( 10000, 100000 ),
+					'type'  => 'hidden',
+				),
 			);
 
 			$settings = apply_filters( 'give_import_file_upload_html', $settings );
@@ -820,6 +825,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 						'delete_csv'    => empty( $_POST['delete_csv'] ) ?
 							'1' :
 							( give_is_setting_enabled( give_clean( $_POST['delete_csv'] ) ) ? '1' : '0' ),
+						'importer_id'   => absint( ! empty( $_POST['importer_id'] ) ? $_POST['importer_id'] : rand( 10000, 100000 ) ),
 					) ) );
 					?>
 					<script type="text/javascript">
