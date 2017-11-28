@@ -219,11 +219,12 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 		}
 	}
 
+	// check with donor and user id.
 	if ( empty( $donor_data->id ) && ! empty( $data['user_id'] ) ) {
 		$user_id    = (int) $data['user_id'];
 		$donor_data = new Give_Donor( $user_id, true );
 
-
+		// check if CSV has donor userid
 		if ( empty( $donor_data->id ) ) {
 			$donor_data = get_user_by( 'id', $user_id );
 			if ( ! empty( $donor_data->ID ) ) {
@@ -263,6 +264,7 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 		}
 	}
 
+	// check with donor id and donor email id.
 	if ( empty( $donor_data->id ) && ! empty( $data['email'] ) ) {
 
 		$donor_data = new Give_Donor( $data['email'] );
@@ -294,7 +296,11 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 				remove_filter( 'give_log_user_in_on_register', 'give_log_user_in_on_register_callback', 11 );
 
 				update_user_meta( $customer_id, '_give_payment_import', true );
+				update_user_meta( $customer_id, 'importer_id', $import_setting['importer_id'] );
+
 				$donor_data = new Give_Donor( $customer_id, true );
+				$donor_data->update_meta( 'importer_id', $import_setting['importer_id'] );
+
 			} else {
 				$customer_id = ( ! empty( $donor_data->ID ) ? $donor_data->ID : false );
 			}
@@ -319,6 +325,8 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 					}
 
 					$donor_data->create( $donor_args );
+
+					$donor_data->update_meta( 'importer_id', $import_setting['importer_id'] );
 
 					// Adding notes that donor is being imported from CSV.
 					$current_user = wp_get_current_user();
