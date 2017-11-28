@@ -787,3 +787,41 @@ function give_import_page_url( $parameter = array() ) {
 
 	return add_query_arg( $import_query_arg, admin_url( 'edit.php' ) );
 }
+
+/**
+ * Give delete all the donation form, donation, user and donor created during the CSV imported.
+ * Will delete all the data that is being created using that importer_id.
+ *
+ * @since 1.8.17
+ *
+ * @param bool $importer_id .
+ */
+function give_delete_importer_data( $importer_id = false ) {
+	if ( ! empty( $importer_id ) ) {
+
+		/**
+		 * Filter to modify donation query that are getting delete by passing importer id.
+		 *
+		 * @since 1.8.17
+		 */
+		$args = (array) apply_filters( 'give_delete_importer_data',
+			array(
+				'output'         => 'payments',
+				'post_status'    => 'any',
+				'number'         => - 1,
+				'meta_key'       => 'give_importer_id',
+				'meta_value_num' => absint( $importer_id ),
+			),
+			$importer_id
+		);
+
+		$posts    = new Give_Payments_Query( $args );
+		$payments = $posts->get_payments();
+
+		if ( $payments ) {
+			foreach ( $payments as $payment ) {
+				give_delete_donation( $payment->ID );
+			}
+		}
+	}
+}
