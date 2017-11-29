@@ -820,7 +820,7 @@ function give_delete_importer_donation( $importer_id ) {
 	 *
 	 * @since 1.8.17
 	 */
-	$args = (array) apply_filters( 'give_delete_importer_data',
+	$args = (array) apply_filters( 'give_delete_importer_donation',
 		array(
 			'output'         => 'payments',
 			'post_status'    => 'any',
@@ -853,11 +853,11 @@ function give_delete_importer_donation( $importer_id ) {
 function give_delete_importer_donor( $importer_id ) {
 	$importer_id = absint( $importer_id );
 	/**
-	 * Filter to modify donation query that are getting delete by passing importer id.
+	 * Filter to modify donor query that are getting delete by passing importer id.
 	 *
 	 * @since 1.8.17
 	 */
-	$args = (array) apply_filters( 'give_delete_importer_data',
+	$args = (array) apply_filters( 'give_delete_importer_donor',
 		array(
 			'fields' => 'id',
 			'meta_query' => array(
