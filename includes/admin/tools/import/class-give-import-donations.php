@@ -184,12 +184,30 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 						if ( false === $this->check_for_dropdown_or_import() ) {
 							?>
 							<tr valign="top">
-								<th></th>
 								<th>
 									<input type="submit"
-										   class="button button-primary button-large button-secondary <?php echo "step-{$step}"; ?>"
-										   id="recount-stats-submit"
-										   value="<?php esc_attr_e( 'Submit', 'give' ); ?>"/>
+									       class="button button-primary button-large button-secondary <?php echo "step-{$step}"; ?>"
+									       id="recount-stats-submit"
+									       value="
+									       <?php
+									       /**
+									        * Filter to modify donation importer submit button text.
+									        *
+									        * @since 1.8.17
+									        */
+									       echo esc_html( apply_filters( 'give_import_donation_submit_button_text', __( 'Submit', 'give' ) ) );
+									       ?>
+											"/>
+								</th>
+								<th>
+									<?php
+									/**
+									 * Action to add submit button description.
+									 *
+									 * @since 1.8.17
+									 */
+									do_action( 'give_import_donation_submit_button' );
+									?>
 								</th>
 							</tr>
 							<?php
@@ -692,6 +710,40 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 		}
 
 		/**
+		 * Print Dry Run HTML on donation import page
+		 *
+		 * @since 1.8.17
+		 */
+		public function give_import_donation_submit_button_render_media_csv() {
+			?>
+			<div>
+				<label for="dryrun">
+					<input type="checkbox" name="dryrun" id="dryrun" value="1">
+					<?php _e( 'Dry Run', 'give' ) ?>
+				</label>
+				<p class="give-field-description">
+					<?php
+					_e( 'Preview what the import would look like without making any defalut changes to your site or your database.' )
+					?>
+				</p>
+			</div>
+			<?php
+		}
+
+		/**
+		 * Change submit button text on first step of importing donation.
+		 *
+		 * @since 1.8.17
+		 *
+		 * @param $text
+		 *
+		 * @return string
+		 */
+		function give_import_donation_submit_text_render_media_csv( $text ) {
+			return __( 'Being Import', 'give' );
+		}
+
+		/**
 		 * Add CSV upload HTMl
 		 *
 		 * Print the html of the file upload from which CSV will be uploaded.
@@ -700,6 +752,8 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 		 * @return void
 		 */
 		public function render_media_csv() {
+			add_filter( 'give_import_donation_submit_button_text', array( $this, 'give_import_donation_submit_text_render_media_csv' ) );
+			add_action( 'give_import_donation_submit_button', array( $this, 'give_import_donation_submit_button_render_media_csv' ) );
 			?>
 			<tr valign="top">
 				<th colspan="2">
