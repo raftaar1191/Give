@@ -755,7 +755,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 				array(
 					'id'          => 'mode',
 					'name'        => __( 'Test Mode:', 'give' ),
-					'description' => __( 'Test mode allows you to preview what this import would look like without making any actual changes to your site or your database.', 'give' ),
+					'description' => __( 'Choose whether you would like the imported donations to be created in test mode or not.', 'give' ),
 					'default'     => $mode,
 					'type'        => 'radio_inline',
 					'options'     => array(
