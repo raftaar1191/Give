@@ -1661,6 +1661,9 @@ table.give-table td.row-title p {
 .give-settings-page table table input[type="text"] {
   width: 15em; }
 
+.give-settings-page .give-import-form .give-table .dryrun {
+  margin: 3px 8px 0 5px; }
+
 .give-setting-tab-header {
   clear: both;
   overflow: hidden;
