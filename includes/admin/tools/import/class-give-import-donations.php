@@ -718,8 +718,8 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 			?>
 			<div>
 				<label for="dryrun">
-					<input type="checkbox" name="dryrun" id="dryrun" value="1">
-					<?php _e( 'Dry Run', 'give' ) ?>
+					<input type="checkbox" name="dryrun" id="dryrun" class="dryrun" value="1">
+					<strong><?php _e( 'Dry Run', 'give' ); ?></strong>
 				</label>
 				<p class="give-field-description">
 					<?php
