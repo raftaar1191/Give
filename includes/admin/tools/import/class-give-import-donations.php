@@ -48,7 +48,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 		 *
 		 * @var   int
 		 */
-		public static $per_page = 5;
+		public static $per_page = 25;
 
 		/**
 		 * Singleton pattern.
@@ -57,8 +57,8 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 		 * @access private
 		 */
 		private function __construct() {
+			self::$per_page  = ! empty( $_GET['per_page'] ) ? absint( $_GET['per_page'] ) : self::$per_page;
 		}
-
 
 		/**
 		 * Get instance.
@@ -779,6 +779,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 			if ( empty( $csv_id ) || ! $this->is_valid_csv( $csv_id, $csv ) ) {
 				$csv_id = $csv = '';
 			}
+			$per_page = isset( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : self::$per_page;
 
 			$settings = array(
 				array(
@@ -840,9 +841,17 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 					),
 				),
 				array(
-					'id'    => 'importer_id',
+					'id'          => 'per_page',
+					'name'        => __( 'Process Rows Per Batch:', 'give' ),
+					'type'        => 'number',
+					'description' => __( 'Determine how many rows you would like to import per cycle.', 'give' ),
+					'default'     => $per_page,
+					'class'       => 'give-text-small',
+				),
+				array(
+					'id'      => 'importer_id',
 					'default' => rand( 10000, 100000 ),
-					'type'  => 'hidden',
+					'type'    => 'hidden',
 				),
 			);
 
@@ -881,6 +890,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 							'1' :
 							( give_is_setting_enabled( give_clean( $_POST['delete_csv'] ) ) ? '1' : '0' ),
 						'importer_id'   => absint( ! empty( $_POST['importer_id'] ) ? $_POST['importer_id'] : rand( 10000, 100000 ) ),
+						'per_page'      => isset( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : self::$per_page,
 					) ) );
 					?>
 					<script type="text/javascript">
