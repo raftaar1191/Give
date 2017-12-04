@@ -816,6 +816,9 @@ function give_delete_importer_data( $importer_id = false ) {
 
 		// delete importer donor.
 		give_delete_importer_donor( $importer_id );
+
+		// delete importer donor.
+		give_delete_importer_donation_form( $importer_id );
 	}
 }
 
@@ -835,7 +838,7 @@ function give_delete_importer_donation( $importer_id ) {
 	 */
 	$args = (array) apply_filters( 'give_delete_importer_donation',
 		array(
-			'output'         => 'payments',
+			'output'         => 'payments_delete',
 			'post_status'    => 'any',
 			'number'         => - 1,
 			'meta_key'       => 'give_importer_id',
@@ -847,11 +850,45 @@ function give_delete_importer_donation( $importer_id ) {
 	$posts    = new Give_Payments_Query( $args );
 	$payments = $posts->get_payments();
 
-	if ( $payments ) {
-		foreach ( $payments as $payment ) {
-			// delete importer donation.
-			give_delete_donation( $payment->ID );
-		}
+	foreach ( (array) $payments as $payment ) {
+		// delete importer donation.
+		give_delete_donation( $payment->ID );
+	}
+}
+
+
+/**
+ * Give delete all the donation form created during the CSV imported.
+ * Will delete all the form that is being created using that importer_id.
+ *
+ * @since 1.8.17
+ *
+ * @param bool $importer_id .
+ */
+function give_delete_importer_donation_form( $importer_id ) {
+	/**
+	 * Filter to modify donation form query that are getting delete by passing importer id.
+	 *
+	 * @since 1.8.17
+	 */
+	$args = (array) apply_filters( 'give_delete_importer_donation_form',
+		array(
+			'output'         => 'donation_form',
+			'post_type'      => array( 'give_forms' ),
+			'post_status'    => 'any',
+			'number'         => - 1,
+			'meta_key'       => 'give_importer_id',
+			'meta_value_num' => absint( $importer_id ),
+		),
+		$importer_id
+	);
+
+	$posts    = new Give_Payments_Query( $args );
+	$payments = $posts->get_payments();
+
+	foreach ( (array) $payments as $payment ) {
+		// Remove the donation form.
+		wp_delete_post( $payment->ID, true );
 	}
 }
 

@@ -295,6 +295,9 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 							'page'      => 'give-payment-history',
 						);
 						$text      = __( 'View Donations', 'give' );
+
+						$importer_id = ! empty( $_GET['importer_id'] ) ? absint( $_GET['importer_id'] ) : false;
+						give_delete_importer_data( $importer_id );
 					}
 
 					foreach ( $report as $key => $value ) {
