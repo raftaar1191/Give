@@ -811,8 +811,6 @@ function give_import_page_url( $parameter = array() ) {
  */
 function give_delete_importer_data( $importer_id = false ) {
 	if ( ! empty( $importer_id ) ) {
-		// delete all the donation
-		give_delete_importer_donation( $importer_id );
 
 		// delete importer donor.
 		give_delete_importer_donor( $importer_id );

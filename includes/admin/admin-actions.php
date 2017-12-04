@@ -518,14 +518,15 @@ function give_donation_import_callback() {
 	// Parent key id.
 	$main_key = maybe_unserialize( $import_setting['main_key'] );
 
-	$current    = absint( $_REQUEST['current'] );
-	$total_ajax = absint( $_REQUEST['total_ajax'] );
-	$start      = absint( $_REQUEST['start'] );
-	$end        = absint( $_REQUEST['end'] );
-	$next       = absint( $_REQUEST['next'] );
-	$total      = absint( $_REQUEST['total'] );
-	$per_page   = absint( $_REQUEST['per_page'] );
-	$dry_run    = ! empty( $import_setting['dry_run'] ) ? absint( $import_setting['dry_run'] ) : 0;
+	$current     = absint( $_REQUEST['current'] );
+	$total_ajax  = absint( $_REQUEST['total_ajax'] );
+	$start       = absint( $_REQUEST['start'] );
+	$end         = absint( $_REQUEST['end'] );
+	$next        = absint( $_REQUEST['next'] );
+	$total       = absint( $_REQUEST['total'] );
+	$per_page    = absint( $_REQUEST['per_page'] );
+	$dry_run     = ! empty( $import_setting['dry_run'] ) ? absint( $import_setting['dry_run'] ) : 0;
+	$importer_id = ! empty( $import_setting['importer_id'] ) ? absint( $import_setting['importer_id'] ) : 0;
 
 	if ( empty( $import_setting['delimiter'] ) ) {
 		$import_setting['delimiter'] = ',';
@@ -552,6 +553,12 @@ function give_donation_import_callback() {
 	add_action( 'give_complete_donation', 'give_trigger_donation_receipt', 999 );
 
 	if ( $next == false ) {
+
+		if ( ! empty( $dry_run ) ) {
+			// delete importer donor.
+			give_delete_importer_donation( $importer_id );
+		}
+
 		$json_data = array(
 			'success' => true,
 			'message' => __( 'All donation uploaded successfully!', 'give' ),
@@ -601,23 +608,6 @@ function give_donation_import_callback() {
 }
 
 add_action( 'wp_ajax_give_donation_import', 'give_donation_import_callback' );
-
-/**
- *
- */
-function give_donation_import_dry_run_callback() {
-	$json_data['success'] = false;
-	$delete = ! empty( $_POST['delete'] ) ? give_clean( $_POST['delete'] ) : false;
-	if ( $delete ) {
-
-
-		$json_data['success'] = true;
-		$json_data['delete'] = 'donation_form';
-	}
-	wp_die( json_encode( $json_data ) );
-}
-
-add_action( 'give_donation_import_dry_run', 'give_donation_import_dry_run_callback' );
 
 /**
  * Load core settings import ajax callback
