@@ -281,7 +281,8 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 		if ( empty( $donor_data->id ) ) {
 			$donor_data = get_user_by( 'email', $data['email'] );
 
-			if ( empty( $donor_data->ID ) && ! empty( $data['first_name'] ) && ! empty( $data['last_name'] ) && empty( $import_setting['dry_run'] ) && isset( $import_setting['create_user'] ) && 1 === absint( $import_setting['create_user'] ) ) {
+			// In dry run no wp user is getting created.
+			if ( empty( $import_setting['dry_run'] ) && empty( $donor_data->ID ) && ! empty( $data['first_name'] ) && ! empty( $data['last_name'] ) && isset( $import_setting['create_user'] ) && 1 === absint( $import_setting['create_user'] ) ) {
 				$give_role  = (array) give_get_option( 'donor_default_user_role', get_option( 'default_role', ( ( $give_donor = wp_roles()->is_role( 'give_donor' ) ) && ! empty( $give_donor ) ? 'give_donor' : 'subscriber' ) ) );
 				$donor_args = array(
 					'user_login'      => $data['email'],
@@ -309,15 +310,12 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 				update_user_meta( $customer_id, 'give_csv_id', $import_setting['csv'] );
 				update_user_meta( $customer_id, 'give_importer_id', $import_setting['importer_id'] );
 
-				$donor_data = new Give_Donor( $customer_id, true );
-				$donor_data->update_meta( 'give_csv_id', $import_setting['csv'] );
-				$donor_data->update_meta( 'give_importer_id', $import_setting['importer_id'] );
-
 			} else {
+				// If wp user already exists.
 				$customer_id = ( ! empty( $donor_data->ID ) ? $donor_data->ID : false );
 			}
 
-			if ( ! empty( $customer_id ) || ( isset( $import_setting['create_user'] ) && 0 === absint( $import_setting['create_user'] ) ) ) {
+			if ( ! empty( $customer_id ) || ( isset( $import_setting['create_user'] ) && 0 === absint( $import_setting['create_user'] ) ) || ! empty( $import_setting['dry_run'] ) ) {
 				$donor_data = new Give_Donor( $customer_id, true );
 
 				if ( empty( $donor_data->id ) ) {
@@ -346,6 +344,9 @@ function give_import_get_user_from_csv( $data, $import_setting = array() ) {
 					$donor_data->add_note( esc_html( wp_sprintf( __( 'This donor was imported by %s', 'give' ), $current_user->user_email ) ) );
 
 					$report['create_donor'] = ( ! empty( $report['create_donor'] ) ? ( absint( $report['create_donor'] ) + 1 ) : 1 );
+
+					$donor_data->update_meta( 'give_csv_id', $import_setting['csv'] );
+					$donor_data->update_meta( 'give_importer_id', $import_setting['importer_id'] );
 				} else {
 					$report['duplicate_donor'] = ( ! empty( $report['duplicate_donor'] ) ? ( absint( $report['duplicate_donor'] ) + 1 ) : 1 );
 				}
