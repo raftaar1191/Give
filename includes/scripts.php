@@ -336,7 +336,7 @@ function give_load_admin_scripts( $hook ) {
 		'remove_from_bulk_delete'           => __( 'Remove from Bulk Delete', 'give' ),
 		'donors_bulk_action'                => array(
 			'delete' => array(
-				'zero'     => __( 'You must choose at least one or more donors to delete.', 'give' ),
+				'zero' => __( 'You must choose at least one or more donors to delete.', 'give' ),
 			),
 		),
 		'donations_bulk_action'             => array(
@@ -374,6 +374,7 @@ function give_load_admin_scripts( $hook ) {
 		'give_donation_import'              => 'give_donation_import',
 		'core_settings_import'              => 'give_core_settings_import',
 		'setting_not_save_message'          => __( 'Changes you made may not be saved.', 'give' ),
+		'donation_import_dry_run_text'      => __( 'Deleting the data created during the Process.', 'give' ),
 	) );
 
 	if ( function_exists( 'wp_enqueue_media' ) && version_compare( get_bloginfo( 'version' ), '3.5', '>=' ) ) {

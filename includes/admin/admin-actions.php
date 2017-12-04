@@ -525,7 +525,8 @@ function give_donation_import_callback() {
 	$next       = absint( $_REQUEST['next'] );
 	$total      = absint( $_REQUEST['total'] );
 	$per_page   = absint( $_REQUEST['per_page'] );
-	$dry_run    = absint( $_REQUEST['dry_run'] );
+	$dry_run    = ! empty( $import_setting['dry_run'] ) ? absint( $import_setting['dry_run'] ) : 0;
+
 	if ( empty( $import_setting['delimiter'] ) ) {
 		$import_setting['delimiter'] = ',';
 	}
@@ -569,8 +570,6 @@ function give_donation_import_callback() {
 			$last      = true;
 		}
 		$json_data = array(
-			'raw_data' => $raw_data,
-			'raw_key'  => $raw_key,
 			'next'     => $next,
 			'start'    => $index_start,
 			'end'      => $index_end,
@@ -578,7 +577,7 @@ function give_donation_import_callback() {
 		);
 	}
 
-	$url = give_import_page_url( array(
+	$url              = give_import_page_url( array(
 		'dry_run'       => $dry_run,
 		'step'          => '4',
 		'importer-type' => 'import_donations',
@@ -592,6 +591,7 @@ function give_donation_import_callback() {
 
 	$current ++;
 	$json_data['current'] = $current;
+	$json_data['dry_run'] = $dry_run;
 
 	$percentage              = ( 100 / ( $total_ajax + 1 ) ) * $current;
 	$json_data['percentage'] = $percentage;
@@ -601,6 +601,23 @@ function give_donation_import_callback() {
 }
 
 add_action( 'wp_ajax_give_donation_import', 'give_donation_import_callback' );
+
+/**
+ *
+ */
+function give_donation_import_dry_run_callback() {
+	$json_data['success'] = false;
+	$delete = ! empty( $_POST['delete'] ) ? give_clean( $_POST['delete'] ) : false;
+	if ( $delete ) {
+
+
+		$json_data['success'] = true;
+		$json_data['delete'] = 'donation_form';
+	}
+	wp_die( json_encode( $json_data ) );
+}
+
+add_action( 'give_donation_import_dry_run', 'give_donation_import_dry_run_callback' );
 
 /**
  * Load core settings import ajax callback

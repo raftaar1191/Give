@@ -823,14 +823,16 @@ function give_delete_importer_data( $importer_id = false ) {
 }
 
 /**
- * Give delete all the donation created during the CSV imported.
- * Will delete all the data that is being created using that importer_id.
+ * Give get all the donation created during the CSV imported.
+ * get all the data that is being created using that importer_id.
  *
  * @since 1.8.17
  *
  * @param bool $importer_id .
+ *
+ * return array Payment made by CSV.
  */
-function give_delete_importer_donation( $importer_id ) {
+function give_delete_importer_donation_data( $importer_id ) {
 	/**
 	 * Filter to modify donation query that are getting delete by passing importer id.
 	 *
@@ -847,8 +849,22 @@ function give_delete_importer_donation( $importer_id ) {
 		$importer_id
 	);
 
-	$posts    = new Give_Payments_Query( $args );
-	$payments = $posts->get_payments();
+	$posts = new Give_Payments_Query( $args );
+
+	return $posts->get_payments();
+}
+
+/**
+ * Give delete all the donation created during the CSV imported.
+ * Will delete all the data that is being created using that importer_id.
+ *
+ * @since 1.8.17
+ *
+ * @param bool $importer_id .
+ */
+function give_delete_importer_donation( $importer_id ) {
+
+	$payments = give_delete_importer_donation_data( $importer_id );
 
 	foreach ( (array) $payments as $payment ) {
 		// delete importer donation.
@@ -856,16 +872,17 @@ function give_delete_importer_donation( $importer_id ) {
 	}
 }
 
-
 /**
- * Give delete all the donation form created during the CSV imported.
- * Will delete all the form that is being created using that importer_id.
+ * Give get all the donation form created during the CSV imported.
+ * get all the form that is being created using that importer_id.
  *
  * @since 1.8.17
  *
  * @param bool $importer_id .
+ *
+ * return array Form made by CSV
  */
-function give_delete_importer_donation_form( $importer_id ) {
+function give_delete_importer_donation_form_data( $importer_id ) {
 	/**
 	 * Filter to modify donation form query that are getting delete by passing importer id.
 	 *
@@ -883,8 +900,22 @@ function give_delete_importer_donation_form( $importer_id ) {
 		$importer_id
 	);
 
-	$posts    = new Give_Payments_Query( $args );
-	$payments = $posts->get_payments();
+	$posts = new Give_Payments_Query( $args );
+
+	return $posts->get_payments();
+}
+
+/**
+ * Give delete all the donation form created during the CSV imported.
+ * Will delete all the form that is being created using that importer_id.
+ *
+ * @since 1.8.17
+ *
+ * @param bool $importer_id .
+ */
+function give_delete_importer_donation_form( $importer_id ) {
+
+	$payments = give_delete_importer_donation_form_data( $importer_id );
 
 	foreach ( (array) $payments as $payment ) {
 		// Remove the donation form.
@@ -893,14 +924,14 @@ function give_delete_importer_donation_form( $importer_id ) {
 }
 
 /**
- * Give delete all the donation created during the CSV imported.
- * Will delete all the data that is being created using that importer_id.
+ * Give get all the donor created during the CSV imported.
+ * Will get the donor that is being created using that importer_id.
  *
  * @since 1.8.17
  *
  * @param bool $importer_id .
  */
-function give_delete_importer_donor( $importer_id ) {
+function give_delete_importer_donor_data( $importer_id ) {
 	$importer_id = absint( $importer_id );
 	/**
 	 * Filter to modify donor query that are getting delete by passing importer id.
@@ -909,8 +940,8 @@ function give_delete_importer_donor( $importer_id ) {
 	 */
 	$args = (array) apply_filters( 'give_delete_importer_donor',
 		array(
-			'number' => 10000,
-			'fields' => 'id',
+			'number'     => 10000,
+			'fields'     => 'id',
 			'meta_query' => array(
 				array(
 					'key'   => 'give_importer_id',
@@ -922,7 +953,21 @@ function give_delete_importer_donor( $importer_id ) {
 	);
 
 	$donor = new Give_Donors_Query( $args );
-	$donors = $donor->get_donors();
+
+	return $donor->get_donors();
+}
+
+/**
+ * Give delete all the donor created during the CSV imported.
+ * Will delete all the donor that is being created using that importer_id.
+ *
+ * @since 1.8.17
+ *
+ * @param bool $importer_id .
+ */
+function give_delete_importer_donor( $importer_id ) {
+
+	$donors = give_delete_importer_donor_data( $importer_id );
 
 	if ( $donors ) {
 		foreach ( $donors as $donor ) {
