@@ -66,8 +66,9 @@ function give_import_get_form_data_from_csv( $data, $import_setting = array() ) 
 		// Add support to older php version.
 		$form_id = $form->get_ID();
 		if ( empty( $form_id ) ) {
+			$form = false;
+		} else {
 			$report['duplicate_form'] = ( ! empty( $report['duplicate_form'] ) ? ( absint( $report['duplicate_form'] ) + 1 ) : 1 );
-			$form                     = false;
 		}
 	}
 
@@ -193,8 +194,10 @@ function give_import_get_form_data_from_csv( $data, $import_setting = array() ) 
 
 		$meta = wp_parse_args( $meta, $defaults );
 
-		foreach ( $meta as $key => $value ) {
-			give_update_meta( $form->get_ID(), $key, $value );
+		if ( empty( $import_setting['dry_run'] ) ) {
+			foreach ( $meta as $key => $value ) {
+				give_update_meta( $form->get_ID(), $key, $value );
+			}
 		}
 	}
 
