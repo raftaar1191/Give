@@ -525,6 +525,7 @@ function give_donation_import_callback() {
 	$next       = absint( $_REQUEST['next'] );
 	$total      = absint( $_REQUEST['total'] );
 	$per_page   = absint( $_REQUEST['per_page'] );
+	$dry_run    = absint( $_REQUEST['dry_run'] );
 	if ( empty( $import_setting['delimiter'] ) ) {
 		$import_setting['delimiter'] = ',';
 	}
@@ -578,6 +579,7 @@ function give_donation_import_callback() {
 	}
 
 	$url = give_import_page_url( array(
+		'dry_run'       => $dry_run,
 		'step'          => '4',
 		'importer-type' => 'import_donations',
 		'csv'           => $import_setting['csv'],

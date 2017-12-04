@@ -375,8 +375,9 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 					<input type="hidden" value="<?php echo $delimiter; ?>" name="delimiter">
 					<input type="hidden" value="<?php echo absint( $_REQUEST['importer_id'] ); ?>" name="importer_id">
 					<input type="hidden" value='<?php echo maybe_serialize( self::get_importer( $csv, 0, $delimiter ) ); ?>'
-						   name="main_key"
-						   class="main_key">
+					name="main_key"
+					class="main_key">
+					<input type="hidden" value="<?php echo absint( $_REQUEST['dry_run'] ); ?>" name="dry_run">
 				</th>
 			</tr>
 
