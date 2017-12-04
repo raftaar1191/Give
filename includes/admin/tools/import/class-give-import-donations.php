@@ -715,10 +715,11 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 		 * @since 1.8.17
 		 */
 		public function give_import_donation_submit_button_render_media_csv() {
+			$dry_run = ( isset( $_POST['dry_run'] ) ? absint( $_POST['dry_run'] ) : 0 );
 			?>
 			<div>
-				<label for="dryrun">
-					<input type="checkbox" name="dryrun" id="dryrun" class="dryrun" value="1">
+				<label for="dry_run">
+					<input type="checkbox" name="dry_run" id="dry_run" class="dry_run" value="1" <?php checked( 1, $dry_run ); ?> >
 					<strong><?php _e( 'Dry Run', 'give' ); ?></strong>
 				</label>
 				<p class="give-field-description">
@@ -891,6 +892,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 							( give_is_setting_enabled( give_clean( $_POST['delete_csv'] ) ) ? '1' : '0' ),
 						'importer_id'   => absint( ! empty( $_POST['importer_id'] ) ? $_POST['importer_id'] : rand( 10000, 100000 ) ),
 						'per_page'      => isset( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : self::$per_page,
+						'dry_run'        => isset( $_POST['dry_run'] ) ? absint( $_POST['dry_run'] ) : 0,
 					) ) );
 					?>
 					<script type="text/javascript">
