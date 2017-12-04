@@ -909,6 +909,7 @@ function give_delete_importer_donor( $importer_id ) {
 	 */
 	$args = (array) apply_filters( 'give_delete_importer_donor',
 		array(
+			'number' => 10000,
 			'fields' => 'id',
 			'meta_query' => array(
 				array(
