@@ -426,6 +426,7 @@ class Give_Payment_History_Table extends WP_List_Table {
 
 		$single_donation_url = esc_url( add_query_arg( 'id', $payment->ID, admin_url( 'edit.php?post_type=give_forms&page=give-payment-history&view=view-payment-details' ) ) );
 		$row_actions         = $this->get_row_actions( $payment );
+		$value = '';
 
 		switch ( $column_name ) {
 			case 'donation':
@@ -440,14 +441,7 @@ class Give_Payment_History_Table extends WP_List_Table {
 
 			case 'amount':
 				$amount = ! empty( $payment->total ) ? $payment->total : 0;
-				$value  = give_currency_filter(
-					give_format_amount(
-						$amount, array(
-							'sanitize'    => false,
-							'donation_id' => $payment->ID,
-						)
-					), give_get_payment_currency_code( $payment->ID )
-				);
+				$value  = give_donation_amount( $payment, true );
 				$value .= sprintf( '<br><small>%1$s %2$s</small>', __( 'via', 'give' ), give_get_gateway_admin_label( $payment->gateway ) );
 				break;
 
