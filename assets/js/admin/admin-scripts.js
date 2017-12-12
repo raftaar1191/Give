@@ -2657,7 +2657,7 @@ function give_on_donation_import_ajax() {
 					$form.find( '.give-field-description' ).text( give_vars.donation_import_dry_run_text );
 					jQuery( progress ).find( 'div' ).width( '0%' );
 					jQuery( progress ).data( 'dry_run', 'delete_donations' );
-					give_import_donation_dry_run();
+					give_import_donation_dry_run( 1 );
 				} else {
 					window.location = response.url;
 				}
@@ -2675,7 +2675,7 @@ function give_on_donation_import_ajax() {
 	});
 }
 
-function give_import_donation_dry_run( step = 1 ) {
+function give_import_donation_dry_run( step ) {
 	var $form = jQuery( 'form.tools-setting-page-import' );
 	
 	/**
@@ -2700,8 +2700,8 @@ function give_import_donation_dry_run( step = 1 ) {
 		success: function ( response ) {
 			give_setting_edit = false;
 			if ( response.success === true ) {
-				jQuery(progress).data('current', response.current);
-				jQuery(progress).find('div').width(response.percentage + '%');
+				jQuery( progress ).data( 'current', response.current );
+				jQuery( progress ).find( 'div' ).width( response.percentage + '%' );
 				
 				jQuery( progress ).data( 'dry_run', response.delete );
 				

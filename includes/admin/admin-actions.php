@@ -730,7 +730,8 @@ function give_get_user_roles() {
  */
 function give_donation_import_dry_run_callback() {
 	$json_data['success'] = false;
-	$delete = ! empty( $_POST['delete'] ) ? give_clean( $_POST['delete'] ) : false;
+	$delete               = ! empty( $_POST['delete'] ) ? give_clean( $_POST['delete'] ) : false;
+
 	if ( $delete ) {
 
 		$json_data['success'] = true;
@@ -741,32 +742,36 @@ function give_donation_import_dry_run_callback() {
 		wp_parse_str( $fields, $import_setting );
 
 		$importer_id = ! empty( $import_setting['importer_id'] ) ? absint( $import_setting['importer_id'] ) : false;
+		$per_page = ! empty( $import_setting['per_page'] ) ? absint( $import_setting['per_page'] ) : 25;
+
+
+		// calculating percentage
+		$donation_report = give_import_donation_report();
+		
+
 
 		if ( $importer_id ) {
 
-			if ( 'delete_donations' === $delete ) {
+			switch ( $delete ) {
+				case 'delete_donations':
+					give_delete_importer_donation( $importer_id );
 
-				give_delete_importer_donation( $importer_id );
+					$json_data['delete'] = 'delete_form';
+					break;
+				case 'delete_form':
+					give_delete_importer_donation_form( $importer_id );
 
-				$json_data['delete'] = 'delete_form';
+					$json_data['delete'] = 'delete_donor';
+					break;
+				case 'delete_donor':
+					give_delete_importer_donor( $importer_id );
+
+					$json_data['success'] = false;
+					break;
 			}
-
-
-			if ( 'delete_form' === $delete ) {
-
-				give_delete_importer_donation_form( $importer_id );
-
-				$json_data['delete'] = 'delete_donor';
-			}
-
-			if ( 'delete_donor' === $delete ) {
-
-				give_delete_importer_donor( $importer_id );
-
-				$json_data['success'] = false;
-			}
-        }
+		}
 	}
 	wp_die( json_encode( $json_data ) );
 }
+
 add_action( 'wp_ajax_give_donation_import_dry_run', 'give_donation_import_dry_run_callback' );

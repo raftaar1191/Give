@@ -393,6 +393,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 					name="main_key"
 					class="main_key">
 					<input type="hidden" value="<?php echo absint( $_REQUEST['dry_run'] ); ?>" name="dry_run">
+                    <input type="hidden" value="<?php echo self::$per_page; ?>" name="per_page">
 				</th>
 			</tr>
 
