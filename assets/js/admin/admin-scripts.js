@@ -2656,7 +2656,7 @@ function give_on_donation_import_ajax() {
 				if ( 'undefined' !== typeof( response.dry_run ) && 1 === response.dry_run ) {
 					$form.find( '.give-field-description' ).text( give_vars.donation_import_dry_run_text );
 					jQuery( progress ).find( 'div' ).width( '0%' );
-					jQuery( progress ).data( 'dry_run', 'donation_form' );
+					jQuery( progress ).data( 'dry_run', 'delete_donations' );
 					give_import_donation_dry_run();
 				} else {
 					window.location = response.url;
@@ -2700,8 +2700,10 @@ function give_import_donation_dry_run( step = 1 ) {
 		success: function ( response ) {
 			give_setting_edit = false;
 			if ( response.success === true ) {
-				// jQuery(progress).data('current', response.current);
-				// jQuery(progress).find('div').width(response.percentage + '%');
+				jQuery(progress).data('current', response.current);
+				jQuery(progress).find('div').width(response.percentage + '%');
+				
+				jQuery( progress ).data( 'dry_run', response.delete );
 				
 				give_import_donation_dry_run( 2 );
 				

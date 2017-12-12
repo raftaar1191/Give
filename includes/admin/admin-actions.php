@@ -732,8 +732,40 @@ function give_donation_import_dry_run_callback() {
 	$json_data['success'] = false;
 	$delete = ! empty( $_POST['delete'] ) ? give_clean( $_POST['delete'] ) : false;
 	if ( $delete ) {
+
 		$json_data['success'] = true;
-		$json_data['delete'] = 'donation_form';
+
+		$import_setting = array();
+		$fields         = isset( $_POST['fields'] ) ? $_POST['fields'] : null;
+
+		wp_parse_str( $fields, $import_setting );
+
+		$importer_id = ! empty( $import_setting['importer_id'] ) ? absint( $import_setting['importer_id'] ) : false;
+
+		if ( $importer_id ) {
+
+			if ( 'delete_donations' === $delete ) {
+
+				give_delete_importer_donation( $importer_id );
+
+				$json_data['delete'] = 'delete_form';
+			}
+
+
+			if ( 'delete_form' === $delete ) {
+
+				give_delete_importer_donation_form( $importer_id );
+
+				$json_data['delete'] = 'delete_donor';
+			}
+
+			if ( 'delete_donor' === $delete ) {
+
+				give_delete_importer_donor( $importer_id );
+
+				$json_data['success'] = false;
+			}
+        }
 	}
 	wp_die( json_encode( $json_data ) );
 }
