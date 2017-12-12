@@ -724,3 +724,17 @@ function give_get_user_roles() {
 
 	return $user_roles;
 }
+
+/**
+ *
+ */
+function give_donation_import_dry_run_callback() {
+	$json_data['success'] = false;
+	$delete = ! empty( $_POST['delete'] ) ? give_clean( $_POST['delete'] ) : false;
+	if ( $delete ) {
+		$json_data['success'] = true;
+		$json_data['delete'] = 'donation_form';
+	}
+	wp_die( json_encode( $json_data ) );
+}
+add_action( 'wp_ajax_give_donation_import_dry_run', 'give_donation_import_dry_run_callback' );

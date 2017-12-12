@@ -2652,7 +2652,15 @@ function give_on_donation_import_ajax() {
 				 * @since 1.8.14
 				 */
 				give_setting_edit = false;
-				window.location = response.url;
+				
+				if ( 'undefined' !== typeof( response.dry_run ) && 1 === response.dry_run ) {
+					$form.find( '.give-field-description' ).text( give_vars.donation_import_dry_run_text );
+					jQuery( progress ).find( 'div' ).width( '0%' );
+					jQuery( progress ).data( 'dry_run', 'donation_form' );
+					give_import_donation_dry_run();
+				} else {
+					window.location = response.url;
+				}
 			}
 		},
 		error: function () {
@@ -2665,4 +2673,51 @@ function give_on_donation_import_ajax() {
 			alert(give_vars.error_message);
 		}
 	});
+}
+
+function give_import_donation_dry_run( step = 1 ) {
+	var $form = jQuery( 'form.tools-setting-page-import' );
+	
+	/**
+	 * Do not allow user to reload the page
+	 *
+	 * @since 1.8.14
+	 */
+	give_setting_edit = true;
+	
+	var progress = $form.find( '.give-progress' );
+	
+	jQuery.ajax( {
+		type: 'POST',
+		url: ajaxurl,
+		data: {
+			action: 'give_donation_import_dry_run',
+			delete: jQuery( progress ).data( 'dry_run' ),
+			step: step,
+			fields: $form.serialize()
+		},
+		dataType: 'json',
+		success: function ( response ) {
+			give_setting_edit = false;
+			if ( response.success === true ) {
+				// jQuery(progress).data('current', response.current);
+				// jQuery(progress).find('div').width(response.percentage + '%');
+				
+				give_import_donation_dry_run( 2 );
+				
+			}
+			else {
+				alert( give_vars.error_message );
+			}
+		},
+		error: function () {
+			/**
+			 * Now user is allow to reload the page.
+			 *
+			 * @since 1.8.14
+			 */
+			give_setting_edit = false;
+			alert( give_vars.error_message );
+		}
+	} );
 }
