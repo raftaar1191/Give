@@ -376,6 +376,7 @@ function give_load_admin_scripts( $hook ) {
 		'core_settings_import'              => 'give_core_settings_import',
 		'setting_not_save_message'          => __( 'Changes you made may not be saved.', 'give' ),
 		'donation_import_dry_run_text'      => __( 'Deleting the data created during the Process.', 'give' ),
+		'donation_import_dry_run_loading'   => __( 'Donations are being analysis', 'give' ),
 	) );
 
 	if ( function_exists( 'wp_enqueue_media' ) && version_compare( get_bloginfo( 'version' ), '3.5', '>=' ) ) {

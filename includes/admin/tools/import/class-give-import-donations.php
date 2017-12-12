@@ -353,7 +353,11 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 					<h2 id="give-import-title"><?php esc_html_e( 'Importing', 'give' ); ?></h2>
 					<p class="give-field-description">
                         <?php
-                        esc_html_e( 'Your donations are now being imported...', 'give' );
+                        if ( empty( $_GET['dry_run'] ) ) {
+	                        esc_html_e( 'Your donations are now being imported...', 'give' );
+                        } else {
+	                        esc_html_e( 'Your donations are now being calculating...', 'give' );
+                        }
                         ?>
                     </p>
 				</th>
