@@ -747,8 +747,16 @@ function give_donation_import_dry_run_callback() {
 
 		// calculating percentage
 		$donation_report = give_import_donation_report();
-		
 
+		$create_donor = ! empty( $donation_report['create_donor'] ) ? $donation_report['create_donor'] : 0;
+		$create_form = ! empty( $donation_report['create_form'] ) ? $donation_report['create_form'] : 0;
+		$create_donation = ! empty( $donation_report['create_donation'] ) ? $donation_report['create_donation'] : 0;
+		$total_step = 0;
+
+		if ( ! empty( $create_donor ) ) {
+		    $donor_step = ( $create_donor < $per_page ) ? 1 : ceil( $create_donor / $per_page )
+        }
+		$total_step = $donor_step + $donor_step + $donor_step;
 
 		if ( $importer_id ) {
 
