@@ -350,8 +350,12 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 			?>
 			<tr valign="top" class="give-import-dropdown">
 				<th colspan="2">
-					<h2 id="give-import-title"><?php esc_html_e( 'Importing', 'give' ) ?></h2>
-					<p class="give-field-description"><?php esc_html_e( 'Your donations are now being imported...', 'give' ) ?></p>
+					<h2 id="give-import-title"><?php esc_html_e( 'Importing', 'give' ); ?></h2>
+					<p class="give-field-description">
+                        <?php
+                        esc_html_e( 'Your donations are now being imported...', 'give' );
+                        ?>
+                    </p>
 				</th>
 			</tr>
 
@@ -446,8 +450,8 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 				?>
 				<tr valign="top" class="give-import-dropdown">
 					<th colspan="2">
-						<h2 id="give-import-title"><?php esc_html_e( 'Map CSV fields to donations', 'give' ) ?></h2>
-						<p class="give-field-description"><?php esc_html_e( 'Select fields from your CSV file to map against donations fields or to ignore during import.', 'give' ) ?></p>
+						<h2 id="give-import-title"><?php esc_html_e( 'Map CSV fields to donations', 'give' ); ?></h2>
+						<p class="give-field-description"><?php esc_html_e( 'Select fields from your CSV file to map against donations fields or to ignore during import.', 'give' ); ?></p>
 					</th>
 				</tr>
 
@@ -731,7 +735,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 				</label>
 				<p class="give-field-description">
 					<?php
-					_e( 'Preview what the import would look like without making any defalut changes to your site or your database.' )
+					_e( 'Preview what the import would look like without making any defalut changes to your site or your database.', 'give' );
 					?>
 				</p>
 			</div>
@@ -765,8 +769,8 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 			?>
 			<tr valign="top">
 				<th colspan="2">
-					<h2 id="give-import-title"><?php esc_html_e( 'Import donations from a CSV file', 'give' ) ?></h2>
-					<p class="give-field-description"><?php esc_html_e( 'This tool allows you to import or add donation data to your give form(s) via a CSV file.', 'give' ) ?></p>
+					<h2 id="give-import-title"><?php esc_html_e( 'Import donations from a CSV file', 'give' ); ?></h2>
+					<p class="give-field-description"><?php esc_html_e( 'This tool allows you to import or add donation data to your give form(s) via a CSV file.', 'give' ); ?></p>
 				</th>
 			</tr>
 			<?php
