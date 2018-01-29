@@ -251,7 +251,7 @@ function give_render_donor_view( $view, $callbacks ) {
 		<h1 class="wp-heading-inline">
 			<?php
 			printf(
-			/* translators: %s: donor first name */
+			/* translators: 1: Donor id 2: Donor First name 3: Donor Last name*/
 				__( 'Edit Donor #%s: %s %s', 'give' ),
 				$donor->id,
 				$donor->get_first_name(),
