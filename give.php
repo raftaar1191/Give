@@ -73,6 +73,9 @@ if ( ! class_exists( 'Give' ) ) :
 		 * @var    Give_Roles object
 		 */
 		public $roles;
+
+
+
 		
 
 		/**
