@@ -76,7 +76,12 @@ if ( ! class_exists( 'Give' ) ) :
 
 
 
+
+
 		
+
+
+
 
 		/**
 		 * Give Settings Object
