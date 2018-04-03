@@ -185,13 +185,30 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 					if ( false === $this->check_for_dropdown_or_import() ) {
 						?>
 						<tr valign="top">
-							<th></th>
 							<th>
 								<input type="submit"
-								       class=" button button-primary button-large button-secondary <?php echo "step-{$step}"; ?>"
+								       class="button button-primary button-large button-secondary <?php echo "step-{$step}"; ?>"
 								       id="recount-stats-submit"
-									<?php echo ( 2 === $step ) ? 'disabled' : ''; ?>
-									   value="<?php esc_attr_e( 'Submit', 'give' ); ?>"/>
+								       value="
+									       <?php
+								       /**
+								        * Filter to modify donation importer submit button text.
+								        *
+								        * @since 1.8.17
+								        */
+								       echo esc_html( apply_filters( 'give_import_donation_submit_button_text', __( 'Submit', 'give' ) ) );
+								       ?>
+											"/>
+							</th>
+							<th>
+								<?php
+								/**
+								 * Action to add submit button description.
+								 *
+								 * @since 1.8.17
+								 */
+								do_action( 'give_import_donation_submit_button' );
+								?>
 							</th>
 						</tr>
 						<?php
@@ -359,6 +376,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 					<input type="hidden" value="<?php echo $_REQUEST['delete_csv']; ?>" name="delete_csv"
 					       class="delete_csv">
 					<input type="hidden" value="<?php echo $delimiter; ?>" name="delimiter">
+					<input type="hidden" value="<?php echo absint( $_REQUEST['dry_run'] ); ?>" name="dry_run">
 					<input type="hidden"
 					       value='<?php echo maybe_serialize( self::get_importer( $csv, 0, $delimiter ) ); ?>'
 					       name="main_key"
@@ -367,79 +385,9 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 			</tr>
 
 			<script type="text/javascript">
-				jQuery.noConflict();
-				(function ($) {
-					$(function () {
-
-						var $form = jQuery('form.tools-setting-page-import');
-
-						/**
-						 * Do not allow user to reload the page
-						 *
-						 * @since 1.8.14
-						 */
-						give_setting_edit = true;
-
-						var progress = $form.find('.give-progress');
-
-						var total_ajax = jQuery(progress).data('total_ajax'),
-							current = jQuery(progress).data('current'),
-							start = jQuery(progress).data('start'),
-							end = jQuery(progress).data('end'),
-							next = jQuery(progress).data('next'),
-							total = jQuery(progress).data('total'),
-							per_page = jQuery(progress).data('per_page');
-
-						jQuery.ajax({
-							type: 'POST',
-							url: ajaxurl,
-							data: {
-								action: give_vars.give_donation_import,
-								total_ajax: total_ajax,
-								current: current,
-								start: start,
-								end: end,
-								next: next,
-								total: total,
-								per_page: per_page,
-								fields: $form.serialize()
-							},
-							dataType: 'json',
-							success: function (response) {
-								jQuery(progress).data('current', response.current);
-								jQuery(progress).find('div').width(response.percentage + '%');
-
-								if (response.next == true) {
-									jQuery(progress).data('start', response.start);
-									jQuery(progress).data('end', response.end);
-
-									if (response.last == true) {
-										jQuery(progress).data('next', false);
-									}
-									give_on_donation_import_ajax();
-								} else {
-									/**
-									 * Now user is allow to reload the page.
-									 *
-									 * @since 1.8.14
-									 */
-									give_setting_edit = false;
-									window.location = response.url;
-								}
-							},
-							error: function () {
-								/**
-								 * Now user is allow to reload the page.
-								 *
-								 * @since 1.8.14
-								 */
-								give_setting_edit = false;
-								alert(give_vars.error_message);
-							}
-						});
-
-					});
-				})(jQuery);
+				jQuery(document).ready(function () {
+					window.give_on_donation_import_ajax();
+				});
 			</script>
 			<?php
 		}
@@ -813,6 +761,41 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 		}
 
 		/**
+		 * Print Dry Run HTML on donation import page
+		 *
+		 * @since 1.8.17
+		 */
+		public function give_import_donation_submit_button_render_media_csv() {
+			$dry_run = ( isset( $_POST['dry_run'] ) ? absint( $_POST['dry_run'] ) : 0 );
+			?>
+			<div>
+				<label for="dry_run">
+					<input type="checkbox" name="dry_run" id="dry_run" class="dry_run" value="1" <?php checked( 1, $dry_run ); ?> >
+					<strong><?php _e( 'Dry Run', 'give' ); ?></strong>
+				</label>
+				<p class="give-field-description">
+					<?php
+					_e( 'Preview what the import would look like without making any defalut changes to your site or your database.', 'give' );
+					?>
+				</p>
+			</div>
+			<?php
+		}
+
+		/**
+		 * Change submit button text on first step of importing donation.
+		 *
+		 * @since 1.8.17
+		 *
+		 * @param $text
+		 *
+		 * @return string
+		 */
+		function give_import_donation_submit_text_render_media_csv( $text ) {
+			return __( 'Being Import', 'give' );
+		}
+
+		/**
 		 * Add CSV upload HTMl
 		 *
 		 * Print the html of the file upload from which CSV will be uploaded.
@@ -821,6 +804,9 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 		 * @return void
 		 */
 		public function render_media_csv() {
+			add_filter( 'give_import_donation_submit_button_text', array( $this, 'give_import_donation_submit_text_render_media_csv' ) );
+			add_action( 'give_import_donation_submit_button', array( $this, 'give_import_donation_submit_button_render_media_csv' ) );
+
 			?>
 			<tr valign="top">
 				<th colspan="2">
@@ -960,6 +946,7 @@ if ( ! class_exists( 'Give_Import_Donations' ) ) {
 							'1' :
 							( give_is_setting_enabled( give_clean( $_POST['delete_csv'] ) ) ? '1' : '0' ),
 						'per_page'      => isset( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : self::$per_page,
+						'dry_run'        => isset( $_POST['dry_run'] ) ? absint( $_POST['dry_run'] ) : 0,
 					) ) );
 					?>
 					<script type="text/javascript">
