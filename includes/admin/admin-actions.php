@@ -568,14 +568,14 @@ function give_donation_import_callback() {
 	$total      = absint( $_REQUEST['total'] );
 	$per_page   = absint( $_REQUEST['per_page'] );
 
+	$current_key = $start;
+
 	if ( empty( $delimiter ) ) {
 		$delimiter = ',';
 	}
 
-	$current_key = $start;
-	if ( empty( $import_setting['dry_run'] ) ) {
-		$csv_raw_data                   = give_get_donation_data_from_csv( $csv, 1, $end, $delimiter );
-		$import_setting['csv_raw_data'] = $csv_raw_data;
+	if ( ! empty( $dry_run ) ) {
+		$import_setting['csv_raw_data'] = give_get_donation_data_from_csv( $csv, 1, $end, $delimiter );
 	}
 
 	// Prevent normal emails.

@@ -594,26 +594,35 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 	$dry_run                       = isset( $import_setting['dry_run'] ) ? $import_setting['dry_run'] : false;
 	$is_duplicate                  = false;
 
+	// Get the report
+	$report = give_import_donation_report();
+
 	$data = (array) apply_filters( 'give_save_import_donation_to_db', $data );
 
 	$data['amount'] = give_maybe_sanitize_amount( $data['amount'] );
 
 	if ( ! empty( $dry_run ) ) {
+
 		$csv_raw_data = empty( $import_setting['csv_raw_data'] ) ? array() : $import_setting['csv_raw_data'];
 		$donation_key = empty( $import_setting['donation_key'] ) ? 1 : $import_setting['donation_key'];
+
 		for ( $i = 0; $i < $donation_key; $i ++ ) {
 			$csv_data           = array_combine( $raw_key, $csv_raw_data[ $i ] );
 			$csv_data['amount'] = give_maybe_sanitize_amount( $csv_data['amount'] );
-			foreach ( $csv_data as $key => $value ) {
-				if ( $is_duplicate[ $key ] !== $data[ $key ] ) {
-					$is_duplicate              = true;
-					$report['duplicate_donor'] = ( ! empty( $report['duplicate_donor'] ) ? ( absint( $report['duplicate_donor'] ) + 1 ) : 1 );
-					$report['duplicate_form']  = ( ! empty( $report['duplicate_form'] ) ? ( absint( $report['duplicate_form'] ) + 1 ) : 1 );
-					break;
-				}
+
+			$diff = array_diff( $csv_data, $data );
+
+			if ( empty( $diff ) ) {
+				$is_duplicate = true;
+
+				$report['duplicate_donor'] = ( ! empty( $report['duplicate_donor'] ) ? ( absint( $report['duplicate_donor'] ) + 1 ) : 1 );
+				$report['duplicate_form']  = ( ! empty( $report['duplicate_form'] ) ? ( absint( $report['duplicate_form'] ) + 1 ) : 1 );
+				break;
 			}
 		}
 	}
+
+	return true;
 
 	if ( empty( $is_duplicate ) ) {
 		// Here come the login function.
@@ -688,9 +697,6 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 	 * @return array $payment_data payment data
 	 */
 	$payment_data = apply_filters( 'give_import_before_import_payment', $payment_data, $data, $donor_data, $form );
-
-	// Get the report
-	$report = give_import_donation_report();
 
 	// Check for duplicate code.
 	$donation_duplicate = give_check_import_donation_duplicate( $payment_data, $data, $form, $donor_data );
