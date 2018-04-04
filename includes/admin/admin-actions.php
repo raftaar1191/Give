@@ -550,6 +550,7 @@ function give_donation_import_callback() {
 	$import_setting['delimiter']   = $delimiter;
 	$import_setting['csv']         = $csv;
 	$import_setting['delete_csv']  = $delete_csv;
+	$import_setting['dry_run']     = $dry_run;
 
 	// Parent key id.
 	$main_key = maybe_unserialize( $main_key );
@@ -561,6 +562,7 @@ function give_donation_import_callback() {
 	$next       = absint( $_REQUEST['next'] );
 	$total      = absint( $_REQUEST['total'] );
 	$per_page   = absint( $_REQUEST['per_page'] );
+
 	if ( empty( $delimiter ) ) {
 		$delimiter = ',';
 	}
@@ -568,25 +570,33 @@ function give_donation_import_callback() {
 	// Processing done here.
 	$raw_data = give_get_donation_data_from_csv( $csv, $start, $end, $delimiter );
 	$raw_key  = maybe_unserialize( $mapto );
-
-	// Prevent normal emails.
-	remove_action( 'give_complete_donation', 'give_trigger_donation_receipt', 999 );
-	remove_action( 'give_insert_user', 'give_new_user_notification', 10 );
-	remove_action( 'give_insert_payment', 'give_payment_save_page_data' );
-
 	$current_key = $start;
-	foreach ( $raw_data as $row_data ) {
-		$import_setting['donation_key'] = $current_key;
-		give_save_import_donation_to_db( $raw_key, $row_data, $main_key, $import_setting );
-		$current_key ++;
-	}
 
-	// Check if function exists or not.
-	if ( function_exists( 'give_payment_save_page_data' ) ) {
-		add_action( 'give_insert_payment', 'give_payment_save_page_data' );
+	if ( empty( $import_setting['dry_run'] ) ) {
+		// Prevent normal emails.
+		remove_action( 'give_complete_donation', 'give_trigger_donation_receipt', 999 );
+		remove_action( 'give_insert_user', 'give_new_user_notification', 10 );
+		remove_action( 'give_insert_payment', 'give_payment_save_page_data' );
+
+		foreach ( $raw_data as $row_data ) {
+			$import_setting['donation_key'] = $current_key;
+			give_save_import_donation_to_db( $raw_key, $row_data, $main_key, $import_setting );
+			$current_key ++;
+		}
+
+		// Check if function exists or not.
+		if ( function_exists( 'give_payment_save_page_data' ) ) {
+			add_action( 'give_insert_payment', 'give_payment_save_page_data' );
+		}
+		add_action( 'give_insert_user', 'give_new_user_notification', 10, 2 );
+		add_action( 'give_complete_donation', 'give_trigger_donation_receipt', 999 );
+	} else {
+		foreach ( $raw_data as $row_data ) {
+			$import_setting['donation_key'] = $current_key;
+			give_import_donation_dry_run( $raw_key, $row_data, $main_key, $import_setting );
+			$current_key ++;
+		}
 	}
-	add_action( 'give_insert_user', 'give_new_user_notification', 10, 2 );
-	add_action( 'give_complete_donation', 'give_trigger_donation_receipt', 999 );
 
 	if ( $next == false ) {
 		$json_data = array(

@@ -547,11 +547,28 @@ function give_log_user_in_on_register_callback( $value ) {
 }
 
 /**
+ * Dry Run import Donation forms, donations , donor from CSV
+ *
+ * @since 2.1
+ *
+ * @param array $raw_key Setup by user at step 2.
+ * @param array $row_data Feilds that are being imported from CSV
+ * @param array $main_key First row from the CSV
+ * @param array $import_setting Contain the global variable.
+ *
+ * @return bool
+ */
+function give_import_donation_dry_run( $raw_key, $row_data, $main_key = array(), $import_setting = array() ) {
+	$data = array_combine( $raw_key, $row_data );
+	return true;
+}
+
+/**
  * Add import Donation forms, donations , donor from CSV to database
  *
  * @since 1.8.13
  *
- * @param array $raw_key        Setup bu user at step 2.
+ * @param array $raw_key        Setup by user at step 2.
  * @param array $row_data       Feilds that are being imported from CSV
  * @param array $main_key       First row from the CSV
  * @param array $import_setting Contain the global variable.
