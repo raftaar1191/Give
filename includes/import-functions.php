@@ -588,36 +588,56 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 	$data                          = array_combine( $raw_key, $row_data );
 	$price_id                      = false;
 	$donor_id                      = 0;
+	$donor_data                    = array();
+	$form                          = array();
 	$import_setting['create_user'] = isset( $import_setting['create_user'] ) ? $import_setting['create_user'] : 1;
 	$dry_run                       = isset( $import_setting['dry_run'] ) ? $import_setting['dry_run'] : false;
+	$is_duplicate                  = false;
 
 	$data = (array) apply_filters( 'give_save_import_donation_to_db', $data );
 
 	$data['amount'] = give_maybe_sanitize_amount( $data['amount'] );
 
-	// Here come the login function.
-	$donor_data = give_import_get_user_from_csv( $data, $import_setting );
-
-	if ( empty( $dry_run ) ) {
-		if ( ! empty( $donor_data->id ) ) {
-			if ( ! empty( $donor_data->user_id ) ) {
-				$donor_id = $donor_data->user_id;
-			} elseif ( ! empty( $data['user_id'] ) ) {
-				$donor_id = $data['user_id'];
+	if ( ! empty( $dry_run ) ) {
+		$csv_raw_data = empty( $import_setting['csv_raw_data'] ) ? array() : $import_setting['csv_raw_data'];
+		$donation_key = empty( $import_setting['donation_key'] ) ? 1 : $import_setting['donation_key'];
+		for ( $i = 0; $i < $donation_key; $i ++ ) {
+			$csv_data           = array_combine( $raw_key, $csv_raw_data[ $i ] );
+			$csv_data['amount'] = give_maybe_sanitize_amount( $csv_data['amount'] );
+			foreach ( $csv_data as $key => $value ) {
+				if ( $is_duplicate[ $key ] !== $data[ $key ] ) {
+					$is_duplicate              = true;
+					$report['duplicate_donor'] = ( ! empty( $report['duplicate_donor'] ) ? ( absint( $report['duplicate_donor'] ) + 1 ) : 1 );
+					$report['duplicate_form']  = ( ! empty( $report['duplicate_form'] ) ? ( absint( $report['duplicate_form'] ) + 1 ) : 1 );
+					break;
+				}
 			}
-		} else {
-			return false;
 		}
 	}
 
-	// get form data or register a form data.
-	$form = give_import_get_form_data_from_csv( $data, $import_setting );
-	if ( false == $form && empty( $dry_run ) ) {
-		return false;
-	} else {
-		$price_id = ( ! empty( $form->price_id ) ) ? $form->price_id : false;
-	}
+	if ( empty( $is_duplicate ) ) {
+		// Here come the login function.
+		$donor_data = give_import_get_user_from_csv( $data, $import_setting );
+		if ( empty( $dry_run ) ) {
+			if ( ! empty( $donor_data->id ) ) {
+				if ( ! empty( $donor_data->user_id ) ) {
+					$donor_id = $donor_data->user_id;
+				} elseif ( ! empty( $data['user_id'] ) ) {
+					$donor_id = $data['user_id'];
+				}
+			} else {
+				return false;
+			}
+		}
 
+		// get form data or register a form data.
+		$form = give_import_get_form_data_from_csv( $data, $import_setting );
+		if ( false == $form && empty( $dry_run ) ) {
+			return false;
+		} else {
+			$price_id = ( ! empty( $form->price_id ) ) ? $form->price_id : false;
+		}
+	}
 
 	$status  = give_import_donation_get_status( $data );
 	$country = ( ! empty( $data['country'] ) ? ( ( $country_code = array_search( $data['country'], give_get_country_list() ) ) ? $country_code : $data['country'] ) : '' );
@@ -674,7 +694,7 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 
 	// Check for duplicate code.
 	$donation_duplicate = give_check_import_donation_duplicate( $payment_data, $data, $form, $donor_data );
-	if ( false !== $donation_duplicate ) {
+	if ( false !== $donation_duplicate || ! empty( $is_duplicate ) ) {
 		$report['donation_details'][ $import_setting['donation_key'] ]['duplicate'] = $donation_duplicate;
 		$report['duplicate_donation']                                               = ( ! empty( $report['duplicate_donation'] ) ? ( absint( $report['duplicate_donation'] ) + 1 ) : 1 );
 	} else {
@@ -881,7 +901,7 @@ function give_check_import_donation_duplicate( $payment_data, $data, $form, $don
 				),
 				array(
 					'key'     => '_give_payment_donor_id',
-					'value'   => $donor_data->id,
+					'value'   => isset( $donor_data->id ) ? $donor_data->id : '',
 					'compare' => '=',
 				),
 			),

@@ -545,6 +545,11 @@ function give_donation_import_callback() {
 
 	parse_str( $fields );
 
+	// Processing done here.
+	$raw_data    = give_get_donation_data_from_csv( $csv, $start, $end, $delimiter );
+	$raw_key     = maybe_unserialize( $mapto );
+
+	$import_setting['raw_key']     = $raw_key;
 	$import_setting['create_user'] = $create_user;
 	$import_setting['mode']        = $mode;
 	$import_setting['delimiter']   = $delimiter;
@@ -567,9 +572,6 @@ function give_donation_import_callback() {
 		$delimiter = ',';
 	}
 
-	// Processing done here.
-	$raw_data    = give_get_donation_data_from_csv( $csv, $start, $end, $delimiter );
-	$raw_key     = maybe_unserialize( $mapto );
 	$current_key = $start;
 	if ( empty( $import_setting['dry_run'] ) ) {
 		$csv_raw_data                   = give_get_donation_data_from_csv( $csv, 1, $end, $delimiter );
