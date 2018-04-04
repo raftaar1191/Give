@@ -593,6 +593,7 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 	$import_setting['create_user'] = isset( $import_setting['create_user'] ) ? $import_setting['create_user'] : 1;
 	$dry_run                       = isset( $import_setting['dry_run'] ) ? $import_setting['dry_run'] : false;
 	$is_duplicate                  = false;
+	$donation_key                  = empty( $import_setting['donation_key'] ) ? 1 : (int) $import_setting['donation_key'];
 
 	// Get the report
 	$report = give_import_donation_report();
@@ -600,29 +601,29 @@ function give_save_import_donation_to_db( $raw_key, $row_data, $main_key = array
 	$data = (array) apply_filters( 'give_save_import_donation_to_db', $data );
 
 	$data['amount'] = give_maybe_sanitize_amount( $data['amount'] );
+	$diff           = array();
 
-	if ( ! empty( $dry_run ) ) {
+	if ( ! empty( $dry_run ) && 1 !== $donation_key ) {
 
 		$csv_raw_data = empty( $import_setting['csv_raw_data'] ) ? array() : $import_setting['csv_raw_data'];
-		$donation_key = empty( $import_setting['donation_key'] ) ? 1 : $import_setting['donation_key'];
+		$key          = $donation_key - 1;
 
-		for ( $i = 0; $i < $donation_key; $i ++ ) {
+		for ( $i = 0; $i < $key; $i ++ ) {
 			$csv_data           = array_combine( $raw_key, $csv_raw_data[ $i ] );
 			$csv_data['amount'] = give_maybe_sanitize_amount( $csv_data['amount'] );
 
 			$diff = array_diff( $csv_data, $data );
 
 			if ( empty( $diff ) ) {
+
 				$is_duplicate = true;
 
 				$report['duplicate_donor'] = ( ! empty( $report['duplicate_donor'] ) ? ( absint( $report['duplicate_donor'] ) + 1 ) : 1 );
-				$report['duplicate_form']  = ( ! empty( $report['duplicate_form'] ) ? ( absint( $report['duplicate_form'] ) + 1 ) : 1 );
+				$report['duplicate_form'] = ( ! empty( $report['duplicate_form'] ) ? ( absint( $report['duplicate_form'] ) + 1 ) : 1 );
 				break;
 			}
 		}
 	}
-
-	return true;
 
 	if ( empty( $is_duplicate ) ) {
 		// Here come the login function.

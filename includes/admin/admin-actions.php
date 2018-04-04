@@ -545,17 +545,13 @@ function give_donation_import_callback() {
 
 	parse_str( $fields );
 
-	// Processing done here.
-	$raw_data    = give_get_donation_data_from_csv( $csv, $start, $end, $delimiter );
-	$raw_key     = maybe_unserialize( $mapto );
-
-	$import_setting['raw_key']     = $raw_key;
 	$import_setting['create_user'] = $create_user;
 	$import_setting['mode']        = $mode;
 	$import_setting['delimiter']   = $delimiter;
 	$import_setting['csv']         = $csv;
 	$import_setting['delete_csv']  = $delete_csv;
 	$import_setting['dry_run']     = $dry_run;
+	$import_setting['raw_key']     = $raw_key;
 
 	// Parent key id.
 	$main_key = maybe_unserialize( $main_key );
@@ -568,11 +564,13 @@ function give_donation_import_callback() {
 	$total      = absint( $_REQUEST['total'] );
 	$per_page   = absint( $_REQUEST['per_page'] );
 
-	$current_key = $start;
-
 	if ( empty( $delimiter ) ) {
 		$delimiter = ',';
 	}
+
+	// Processing done here.
+	$raw_data    = give_get_donation_data_from_csv( $csv, $start, $end, $delimiter );
+	$raw_key     = maybe_unserialize( $mapto );
 
 	if ( ! empty( $dry_run ) ) {
 		$import_setting['csv_raw_data'] = give_get_donation_data_from_csv( $csv, 1, $end, $delimiter );
@@ -582,7 +580,7 @@ function give_donation_import_callback() {
 	remove_action( 'give_complete_donation', 'give_trigger_donation_receipt', 999 );
 	remove_action( 'give_insert_user', 'give_new_user_notification', 10 );
 	remove_action( 'give_insert_payment', 'give_payment_save_page_data' );
-
+	$current_key = $start;
 	foreach ( $raw_data as $row_data ) {
 		$import_setting['donation_key'] = $current_key;
 		give_save_import_donation_to_db( $raw_key, $row_data, $main_key, $import_setting );
