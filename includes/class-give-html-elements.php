@@ -270,6 +270,7 @@ class Give_HTML_Elements {
 		$output = $this->select( wp_parse_args( $args, array(
 			'name'             => $name,
 			'selected'         => $selected,
+			'chosen'           => false,
 			'options'          => $options,
 			'show_option_all'  => esc_html__( 'All Categories', 'give' ),
 			'show_option_none' => false,
@@ -293,7 +294,7 @@ class Give_HTML_Elements {
 	 * @return string           Tags dropdown.
 	 */
 	public function tags_dropdown( $name = 'give_forms_tags', $selected = 0, $args = array() ) {
-		$tags    = get_terms( 'give_forms_tag', apply_filters( 'give_forms_tag_dropdown', array() ) );
+		$tags = get_terms( 'give_forms_tag', apply_filters( 'give_forms_tag_dropdown', array() ) );
 
 		$options = array();
 
@@ -307,6 +308,7 @@ class Give_HTML_Elements {
 			'options'          => $options,
 			'show_option_all'  => esc_html__( 'All Tags', 'give' ),
 			'show_option_none' => false,
+			'chosen'           => false,
 		) ) );
 
 		return $output;

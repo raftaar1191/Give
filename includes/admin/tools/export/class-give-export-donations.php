@@ -120,6 +120,44 @@ if ( ! class_exists( 'Give_Export_Donations' ) ) {
 					<tr>
 						<td scope="row" class="row-title">
 							<label
+								for="give-form-for-cat"><?php _e( 'Filter by Categories:', 'give' ); ?></label>
+						</td>
+						<td class="give-field-wrap">
+							<div class="give-clearfix give-clearfix">
+								<?php
+								$args = array(
+									'name'   => 'give_forms_categories',
+									'id'     => 'give-form-for-categories',
+									'chosen' => true,
+								);
+								echo Give()->html->category_dropdown( 'give_forms_categories', 0, $args );
+								?>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td scope="row" class="row-title">
+							<label
+								for="give-form-for-cat"><?php _e( 'Filter by Tags:', 'give' ); ?></label>
+						</td>
+						<td class="give-field-wrap">
+							<div class="give-clearfix give-clearfix">
+								<?php
+								$args = array(
+									'name'   => 'give_forms_tags',
+									'id'     => 'give-form-for-tags',
+									'chosen' => true,
+								);
+								echo Give()->html->tags_dropdown( 'give_forms_tag', 0, $args );
+								?>
+							</div>
+						</td>
+					</tr>
+
+					<tr>
+						<td scope="row" class="row-title">
+							<label
 								for="give-form-for-csv-export"><?php _e( 'Filter by Donation Form:', 'give' ); ?></label>
 						</td>
 						<td class="give-field-wrap">
