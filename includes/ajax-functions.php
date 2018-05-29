@@ -245,7 +245,7 @@ function give_ajax_get_states_field() {
 		$data         = Give()->html->select( $args );
 		$states_found = true;
 	} else {
-		$data = 'nostates';
+		$data = sprintf( '<input type="text" id="card_state"  name="card_state" class="cart-state give-input required" placeholder="%s" value="%s" autocomplete="address-level4"/>', $label, $default_state );
 
 		// Get the country list that does not have any states init.
 		$no_states_country = give_no_states_country_list();

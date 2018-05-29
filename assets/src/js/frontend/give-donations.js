@@ -975,13 +975,8 @@ jQuery( function( $ ) {
 					withCredentials: true
 				},
 				success: function( response ) {
-					var html = '';
-					var states_label = response.states_label;
-					if ( typeof (response.states_found) != undefined && true == response.states_found ) {
+					var states_label = response.states_label,
 						html = response.data;
-					} else {
-						html = `<input type="text" id="card_state"  name="card_state" class="cart-state give-input required" placeholder="${states_label}" value="${response.default_state}" autocomplete="address-level4"/>`;
-					}
 
 					if ( false === $form.hasClass( 'float-labels-enabled' ) ) {
 						if ( typeof (response.states_require) != 'undefined' && true == response.states_require ) {
