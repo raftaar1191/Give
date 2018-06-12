@@ -259,3 +259,34 @@ function __give_validate_active_gateways( $value ) {
 }
 
 add_filter( 'give_get_option_gateways', '__give_validate_active_gateways', 10, 1 );
+
+/**
+ * strip slashes from content
+ *
+ * @since 2.0.5
+ *
+ * @param string $content
+ *
+ * @return string
+ */
+function give_the_content_stripslashes( $content ) {
+	return stripslashes( $content );
+}
+
+add_filter( 'give_the_content', 'give_the_content_stripslashes' );
+
+
+/**
+ * print shortcode from the content
+ *
+ * @since 2.0.5
+ *
+ * @param string $content
+ *
+ * @return string
+ */
+function give_the_content_shortcode( $content ) {
+	return do_shortcode( $content );
+}
+
+add_filter( 'give_the_content', 'give_the_content_shortcode' );

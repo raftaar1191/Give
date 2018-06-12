@@ -30,7 +30,6 @@ function give_offline_register_gateway( $gateways ) {
 
 add_filter( 'give_payment_gateways', 'give_offline_register_gateway', 1 );
 
-
 /**
  * Add our payment instructions to the checkout
  *
@@ -55,9 +54,18 @@ function give_offline_payment_cc_form( $form_id ) {
 	 */
 	do_action( 'give_before_offline_info_fields', $form_id );
 	?>
-    <fieldset id="give_offline_payment_info">
-		<?php echo stripslashes( $offline_instructions ); ?>
-    </fieldset>
+	<fieldset id="give_offline_payment_info">
+		<?php
+		/**
+		 * Filters the give content.
+		 *
+		 * @since 2.0.5
+		 *
+		 * @param string $content Content of the offline instruction.
+		 */
+		echo apply_filters( 'give_the_content', $offline_instructions );
+		?>
+	</fieldset>
 	<?php
 	/**
 	 * Fires after the offline info fields.
