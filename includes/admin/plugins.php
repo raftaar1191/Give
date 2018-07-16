@@ -570,9 +570,6 @@ function give_deactivation_popup() {
 	// Echo content (deactivation form) from the output buffer.
 	echo ob_get_clean();
 
-	// Erase and stop output buffer.
-	ob_end_clean();
-
 	wp_die();
 }
 
