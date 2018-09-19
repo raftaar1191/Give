@@ -12,6 +12,8 @@
 /* globals Give, jQuery */
 jQuery(document).ready(function ($) {
 
+	Give.notice.fn.printNotice();
+
 	/**
 	 *  Sortable payment gateways.
 	 */

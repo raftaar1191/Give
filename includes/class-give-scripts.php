@@ -157,7 +157,7 @@ class Give_Scripts {
 
 		// Give Admin Only.
 		if ( ! apply_filters( 'give_load_admin_scripts', give_is_admin_page(), $hook ) ) {
-			return;
+//			return;
 		}
 
 		// WP Scripts.

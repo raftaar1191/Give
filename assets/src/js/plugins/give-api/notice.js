@@ -11,7 +11,7 @@ export default {
 			// Fix notice appearance issue.
 			window.setTimeout(
 				function () {
-					$( '.give-notice' ).slideDown();
+					jQuery( '.give-notice' ).slideDown();
 				},
 				1000
 			);

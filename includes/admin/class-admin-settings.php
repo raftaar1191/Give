@@ -195,6 +195,8 @@ if ( ! class_exists( 'Give_Admin_Settings' ) ) :
 				}
 			}
 
+			
+
 			echo $notice_html;
 		}
 

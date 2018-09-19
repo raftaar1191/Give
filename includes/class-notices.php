@@ -392,14 +392,6 @@ class Give_Notices {
 			</script>
 			<?php
 		endif;
-		?>
-		<script>
-			jQuery(document).ready(function($){
-				// Fix notice appearance issue.
-				Give.notice.fn.printNotice();
-			});
-		</script>
-		<?php
 	}
 
 
